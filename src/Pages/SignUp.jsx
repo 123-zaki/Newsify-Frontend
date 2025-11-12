@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DatePicker from "../Components/DatePicker";
+import { AuthContext } from "../Contexts/AuthContext";
 
 export default function SignUp() {
   const dobRef = useRef(null);
@@ -12,8 +13,122 @@ export default function SignUp() {
     dateOfBirth: "",
   });
   const [signingUp, setSigningUp] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const {refreshAuth} = useContext(AuthContext);
 
   const navigate = useNavigate();
+
+  const validationRule = {
+    username: [
+      { required: true, message: "Username is required" },
+      { minLength: 3, message: "Username must be at least 3 characters long" },
+      { maxLength: 20, message: "Username must be less than 20 characters" },
+      // {validUsername: true, message: "Please enter a valid username"}
+    ],
+    email: [
+      { required: true, message: "Email is required" },
+      {
+        validEmail: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        message: "Please enter a valid email",
+      },
+    ],
+    password: [
+      { required: true, message: "Password is required" },
+      {
+        validPassword:
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
+        message:
+          "Password must include uppercase, lowercase, number, and special character (8–20 chars).",
+      },
+    ],
+    mobileNumber: [
+      {
+        validMobileNumber: /^(?:\+91[-\s]?|91[-\s]?|0)?[6-9]\d{9}$/,
+        message: "Please enter a valid mobile number",
+      },
+    ],
+    dateOfBirth: [
+      { required: true, message: "Date Of Birth is required" },
+      {
+        minAge: 12,
+        message:
+          "Please enter a valid Date Of Birth, (user should be at least 12 years old)",
+      },
+    ],
+  };
+
+  function validateForm(form_Data) {
+    const validationResult = {};
+    Object.entries(form_Data).forEach(([key, value]) => {
+      if (key === "mobileNumber") {
+        // console.log("req: ", Object.values(validationRule[key][0]));
+        if (value && !Object.values(validationRule[key][0])[0].test(value)) {
+          validationResult[`${key}_valid`] = Object.values(
+            validationRule[key][0]
+          )[1];
+          setErrors((prev) => ({
+            ...prev,
+            mobileNumber: Object.values(validationRule[key][0])[1],
+          }));
+        }
+      } else if (validationRule[key]) {
+        validationRule[key].some((rule) => {
+          // console.log("Rule: ", rule);
+          // console.log("Message: ", rule.message);
+          if (rule.required && !value) {
+            validationResult[`${key}_required`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.minLength && value.length < rule.minLength) {
+            validationResult[`${key}_minLength`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.maxLength && value.length > rule.maxLength) {
+            validationResult[`${key}_maxLength`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.validEmail && !rule.validEmail.test(value)) {
+            validationResult[`${key}_valid`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.validDOB && !rule.validDOB.test(value)) {
+            validationResult[`${key}_valid`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.validMobileNumber && !rule.validMobileNumber.test(value)) {
+            validationResult[`${key}_valid`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.validPassword && !rule.validPassword.test(value)) {
+            validationResult[`${key}_valid`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.minAge && !isAtLeast12YearsOld(value)) {
+            validationResult[`${key}_minAge`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+        });
+      }
+    });
+
+    return validationResult;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -21,14 +136,22 @@ export default function SignUp() {
 
     console.log("Registration Data: ", registrationData);
 
+    const validationResult = validateForm(registrationData);
+    if (Object.entries(validationResult).length) {
+      return;
+    }
+
     try {
       setSigningUp(true);
-      const url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/auth/register`;
+      const url = `${
+        import.meta.env.VITE_BACKEND_BASE_URL
+      }/api/v1/auth/register`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: 'include',
         body: JSON.stringify({
           username: registrationData.username,
           email: registrationData.email,
@@ -38,20 +161,26 @@ export default function SignUp() {
         }),
       });
 
-      const data = await response.json();
-      const user = data.data.user;
+      if (response.ok) {
+        const data = await response.json();
+        const user = data.data.user;
 
-      console.log("Data: ", user);
+        console.log("Data: ", user);
 
-      setRegistrationData({
-        username: "",
-        email: "",
-        password: "",
-        mobileNumber: "",
-        dateOfBirth: "",
-      });
+        setRegistrationData({
+          username: "",
+          email: "",
+          password: "",
+          mobileNumber: "",
+          dateOfBirth: "",
+        });
 
-      navigate("/");
+        await refreshAuth();
+
+        navigate("/");
+      } else {
+        console.log("first: ", response);
+      }
     } catch (error) {
       console.log("Error signing up: ", error.message);
     } finally {
@@ -76,7 +205,7 @@ export default function SignUp() {
           <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
             <form>
               {/* <!--Username input--> */}
-              <div className="mb-6">
+              <div className="mb-6 relative mt-10">
                 <label
                   htmlFor="username"
                   className="block mb-2 text-sm font-medium text-(--text)"
@@ -89,17 +218,19 @@ export default function SignUp() {
                   type="text"
                   value={registrationData.username}
                   onChange={(e) =>
-                    setRegistrationData((prev) => ({
-                      ...prev,
-                      username: e.target.value,
-                    }))
+                    setRegistrationData((prev) => {
+                      setErrors({});
+                      return {...prev,
+                      username: e.target.value,}
+                    })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-800 bg-slate-200 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p className="text-red-500 text-sm absolute top-17">{errors.username}</p>
               </div>
 
               {/* <!-- Email input --> */}
-              <div className="mb-6">
+              <div className="mb-6 relative mt-10">
                 <label
                   htmlFor="email"
                   className="block mb-2 text-sm font-medium text-(--text)"
@@ -112,17 +243,19 @@ export default function SignUp() {
                   type="email"
                   value={registrationData.email}
                   onChange={(e) =>
-                    setRegistrationData((prev) => ({
-                      ...prev,
-                      email: e.target.value,
-                    }))
+                    setRegistrationData((prev) => {
+                      setErrors({});
+                      return  {...prev,
+                      email: e.target.value,}
+                    })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-800 bg-slate-200 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p className="text-red-500 text-sm absolute top-17">{errors.email}</p>
               </div>
 
               {/* <!--Password input--> */}
-              <div className="mb-6">
+              <div className="mb-6 relative mt-10">
                 <label
                   htmlFor="password"
                   className="block mb-2 text-sm font-medium text-(--text)"
@@ -135,17 +268,19 @@ export default function SignUp() {
                   type="password"
                   value={registrationData.password}
                   onChange={(e) =>
-                    setRegistrationData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }))
+                    setRegistrationData((prev) => {
+                      setErrors({});
+                      return  {...prev,
+                      password: e.target.value,}
+                    })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-80 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p className="text-red-500 text-sm absolute top-17">{errors.password}</p>
               </div>
 
               {/* <!--Mobile Number input--> */}
-              <div className="mb-6">
+              <div className="mb-6 relative mt-10">
                 <label
                   htmlFor="mobile"
                   className="block mb-2 text-sm font-medium text-(--text)"
@@ -158,17 +293,19 @@ export default function SignUp() {
                   type="tel"
                   value={registrationData.mobileNumber}
                   onChange={(e) =>
-                    setRegistrationData((prev) => ({
-                      ...prev,
-                      mobileNumber: e.target.value,
-                    }))
+                    setRegistrationData((prev) => {
+                      setErrors({});
+                      return  {...prev,
+                      mobileNumber: e.target.value,}
+                    })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p className="text-red-500 text-sm absolute top-17">{errors.mobileNumber}</p>
               </div>
 
               {/* <!--Date Of Birth input--> */}
-              <div className="mb-6">
+              <div className="mb-6 relative mt-10">
                 <label
                   htmlFor="dob"
                   className="block mb-2 text-sm font-medium text-(--text)"
@@ -185,49 +322,25 @@ export default function SignUp() {
                     allowInput: true,
                   }}
                   onChange={(selectedDates, dateStr) =>
-                    setRegistrationData((prev) => ({
-                      ...prev,
-                      dateOfBirth: dateStr,
-                    }))
+                    setRegistrationData((prev) => {
+                      setErrors({});
+                      return  {...prev,
+                      dateOfBirth: dateStr,}
+                    })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="YYYY-MM-DD"
                 />
+                <p className="text-red-500 text-sm absolute top-17">{errors.dateOfBirth}</p>
               </div>
 
-              {/* <div className="mb-6 flex items-center justify-between">
-                <!-- Remember me checkbox -->
-                <div className="mb-0.5 block min-h-6 pl-6">
-                  <input
-                    className="relative float-left -ml-6 mr-1.5 mt-[0.15rem] h-4.5 w-4.5 appearance-none rounded-sm border-2 border-solid border-neutral-300 outline-none before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] checked:border-blue-600 checked:bg-blue-600 checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ml-1 checked:after:block checked:after:h-3.25 checked:after:w-1.5 checked:after:rotate-45 checked:after:border-2 checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-1 focus:after:block focus:after:h-3.5 focus:after:w-3.5 focus:after:rounded-xs focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ml-1 checked:focus:after:h-3.25 checked:focus:after:w-1.5 checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-2 checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent dark:border-neutral-600 dark:checked:border-blue-600 dark:checked:bg-blue-600 dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-                    type="checkbox"
-                    value=""
-                    id="exampleCheck2"
-                  />
-                  <label
-                    className="inline-block pl-[0.15rem] hover:cursor-pointer text-(--text)"
-                    htmlFor="exampleCheck2"
-                  >
-                    Remember me
-                  </label>
-                </div>
-
-                <!--Forgot password link-->
-                <Link
-                  to={"/forgot-password"}
-                  className="text-blue-500 cursor-pointer hover:text-blue-700"
-                >
-                  Forgot password?
-                </Link>
-              </div> */}
-
               {/* <!-- Login button --> */}
-              <div className="text-center lg:text-left">
+              <div className="text-center lg:text-left py-6 mt-20">
                 <button
                   type="button"
                   disabled={signingUp ? true : false}
                   aria-busy={signingUp}
-                  className="inline-block rounded bg-blue-600 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-blue-700 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-blue-700 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+                  className="inline-block cursor-pointer rounded bg-blue-600 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-blue-700 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-blue-700 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
                   onClick={handleSubmit}
                 >
                   {signingUp ? "Registering..." : "Register"}

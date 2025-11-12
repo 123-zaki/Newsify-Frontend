@@ -6,35 +6,36 @@ export const AuthProvider = ({ children }) => {
   const [authLoading, setAuthLoading] = useState(true);
   const [user, setUser] = useState(null);
 
+  const checkAuth = async () => {
+    const url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/auth/me`;
+
+    console.log("Checking auth");
+
+    try {
+      setAuthLoading(true);
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        // console.log("Checking login")
+        const data = await response.json();
+        // console.log("Data: ", data.data);
+        setUser(data?.data ?? null);
+      } else {
+        setUser(null);
+        console.warn("Auth cheking failed: ", response);
+      }
+    } catch (error) {
+      console.log("Error cheking login: ", error.message);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   useEffect(() => {
     // Do not use async directly on useEffect; define an inner async function.
-    const checkAuth = async () => {
-      const url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/auth/me`;
-
-      console.log("Checking auth");
-
-      try {
-        setAuthLoading(true);
-        const response = await fetch(url, {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (response.ok) {
-          // console.log("Checking login")
-          const data = await response.json();
-          // console.log("Data: ", data.data);
-          setUser(data?.data ?? null);
-        } else {
-          setUser(null);
-          console.warn("Auth cheking failed: ", response);
-        }
-      } catch (error) {
-        console.log("Error cheking login: ", error.message);
-      } finally {
-        setAuthLoading(false);
-      }
-    };
 
     checkAuth();
   }, []);
@@ -55,7 +56,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ authLoading, user, setUser, setAuthLoading, Logout }}
+      value={{
+        authLoading,
+        user,
+        setUser,
+        setAuthLoading,
+        Logout,
+        refreshAuth: checkAuth,
+      }}
     >
       {children}
     </AuthContext.Provider>

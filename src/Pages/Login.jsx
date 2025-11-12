@@ -13,8 +13,120 @@ export default function Login() {
   });
   const [loading, setLoading] = useState(false);
   const [responseErrors, setResponseErrors] = useState("");
+  const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
+
+  const validationRule = {
+    username: [
+      { required: true, message: "Username is required" },
+      { minLength: 3, message: "Username must be at least 3 characters long" },
+      { maxLength: 20, message: "Username must be less than 20 characters" },
+      // {validUsername: true, message: "Please enter a valid username"}
+    ],
+    email: [
+      { required: true, message: "Email is required" },
+      {
+        validEmail: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        message: "Please enter a valid email",
+      },
+    ],
+    password: [
+      { required: true, message: "Password is required" },
+      {
+        validPassword:
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
+        message:
+          "Password must include uppercase, lowercase, number, and special character (8–20 chars).",
+      },
+    ],
+    mobileNumber: [
+      {
+        validMobileNumber: /^(?:\+91[-\s]?|91[-\s]?|0)?[6-9]\d{9}$/,
+        message: "Please enter a valid mobile number",
+      },
+    ],
+    dateOfBirth: [
+      { required: true, message: "Date Of Birth is required" },
+      {
+        minAge: 12,
+        message:
+          "Please enter a valid Date Of Birth, (user should be at least 12 years old)",
+      },
+    ],
+  };
+
+  function validateForm(form_Data) {
+    const validationResult = {};
+    Object.entries(form_Data).forEach(([key, value]) => {
+      if (key === "mobileNumber") {
+        // console.log("req: ", Object.values(validationRule[key][0]));
+        if (value && !Object.values(validationRule[key][0])[0].test(value)) {
+          validationResult[`${key}_valid`] = Object.values(
+            validationRule[key][0]
+          )[1];
+          setErrors((prev) => ({
+            ...prev,
+            mobileNumber: Object.values(validationRule[key][0])[1],
+          }));
+        }
+      } else if (validationRule[key]) {
+        validationRule[key].some((rule) => {
+          // console.log("Rule: ", rule);
+          // console.log("Message: ", rule.message);
+          if (rule.required && !value) {
+            validationResult[`${key}_required`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.minLength && value.length < rule.minLength) {
+            validationResult[`${key}_minLength`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.maxLength && value.length > rule.maxLength) {
+            validationResult[`${key}_maxLength`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.validEmail && !rule.validEmail.test(value)) {
+            validationResult[`${key}_valid`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.validDOB && !rule.validDOB.test(value)) {
+            validationResult[`${key}_valid`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.validMobileNumber && !rule.validMobileNumber.test(value)) {
+            validationResult[`${key}_valid`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.validPassword && !rule.validPassword.test(value)) {
+            validationResult[`${key}_valid`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+
+          if (rule.minAge && !isAtLeast12YearsOld(value)) {
+            validationResult[`${key}_minAge`] = rule.message;
+            setErrors((prev) => ({ ...prev, [key]: rule.message }));
+            return true;
+          }
+        });
+      }
+    });
+
+    return validationResult;
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -76,7 +188,7 @@ export default function Login() {
           <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12 relative">
             <form>
               {/* <!-- Email input --> */}
-              <div className="mb-6">
+              <div className="mb-6 relative mt-10">
                 <label
                   htmlFor="email"
                   className="block mb-2 text-sm font-medium text-(--text)"
@@ -97,10 +209,11 @@ export default function Login() {
                   }}
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-white text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p className="text-red-500 text-sm absolute top-17">{errors.email}</p>
               </div>
 
               {/* <!--Password input--> */}
-              <div className="mb-16">
+              <div className="mb-16 relative mt-10">
                 <label
                   htmlFor="password"
                   className="block mb-2 text-sm font-medium text-(--text)"
@@ -121,6 +234,7 @@ export default function Login() {
                   }}
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-white text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p className="text-red-500 text-sm absolute top-17">{errors.password}</p>
               </div>
 
               <div className="mb-6 flex items-center justify-between">
@@ -166,11 +280,7 @@ export default function Login() {
                   onClick={handleLogin}
                   disabled={loading}
                 >
-                  {loading ? (
-                    <ButtonSpinner />
-                  ) : (
-                    "Login"
-                  )}
+                  {loading ? <ButtonSpinner /> : "Login"}
                 </button>
 
                 {/* <!-- Register link --> */}

@@ -94,7 +94,7 @@ export default function ViewReplies({ parentComment }) {
 
       <button
         className={`cursor-pointer ${
-          isDark ? "text-neutral-300" : "text-slate-400"
+          isDark ? "text-neutral-300" : "text-slate-400 mb-4"
         } font-semibold text-xs ${allrepliesShown ? "hidden" : "flex"}`}
         onClick={async (e) => {
           e.stopPropagation();

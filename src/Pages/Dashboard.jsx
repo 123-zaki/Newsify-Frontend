@@ -49,7 +49,9 @@ export default function Dashboard() {
       try {
         setFetchingNews(true);
 
-        const url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/nearby/news/surrounding`;
+        const url = `${
+          import.meta.env.VITE_BACKEND_BASE_URL
+        }/api/v1/nearby/news/surrounding`;
 
         const response = await fetch(url, {
           method: "GET",
@@ -88,7 +90,9 @@ export default function Dashboard() {
     // }
     // const token = getCookie("token");
 
-    const url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/nearby/news/upload`;
+    const url = `${
+      import.meta.env.VITE_BACKEND_BASE_URL
+    }/api/v1/nearby/news/upload`;
 
     try {
       const fd = new FormData();
@@ -122,8 +126,10 @@ export default function Dashboard() {
 
   async function fetchExistingIndComments() {
     // console.log("Calling fetch existing ind comm.")
-    console.log("News id: ", newsToSeeComment?._id)
-    const url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/comments/ind-comments/${newsToSeeComment?._id}`;
+    console.log("News id: ", newsToSeeComment?._id);
+    const url = `${
+      import.meta.env.VITE_BACKEND_BASE_URL
+    }/api/v1/comments/ind-comments/${newsToSeeComment?._id}`;
 
     try {
       const response = await fetch(url, {

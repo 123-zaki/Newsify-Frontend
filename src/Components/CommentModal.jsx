@@ -149,7 +149,7 @@ export default function CommentModal({
           Comments
         </h2>
         <div className="h-px" ref={sentinelRef}></div>
-        <div className={`text-(--text) max-w-[400px] px-2`}>
+        <div className={`text-(--text) max-w-[400px] px-2 pb-3`}>
           <div className={`flex flex-col gap-0 pb-6 px-2`}>
             {/* Original UI */}
             {existingIndComments?.map((indComment, ind) => {
