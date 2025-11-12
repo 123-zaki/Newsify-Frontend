@@ -14,8 +14,9 @@ export default function SignUp() {
   });
   const [signingUp, setSigningUp] = useState(false);
   const [errors, setErrors] = useState({});
+  const [responseErrors, setResponseErrors] = useState("");
 
-  const {refreshAuth} = useContext(AuthContext);
+  const { refreshAuth } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -151,7 +152,7 @@ export default function SignUp() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify({
           username: registrationData.username,
           email: registrationData.email,
@@ -161,12 +162,10 @@ export default function SignUp() {
         }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        const user = data.data.user;
-
-        console.log("Data: ", user);
-
+      if (data.statusCode >= 400) {
+        setResponseErrors(data.message);
+      } else {
+        console.log("user: ", data.data.user);
         setRegistrationData({
           username: "",
           email: "",
@@ -178,8 +177,6 @@ export default function SignUp() {
         await refreshAuth();
 
         navigate("/");
-      } else {
-        console.log("first: ", response);
       }
     } catch (error) {
       console.log("Error signing up: ", error.message);
@@ -220,13 +217,14 @@ export default function SignUp() {
                   onChange={(e) =>
                     setRegistrationData((prev) => {
                       setErrors({});
-                      return {...prev,
-                      username: e.target.value,}
+                      return { ...prev, username: e.target.value };
                     })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-800 bg-slate-200 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <p className="text-red-500 text-sm absolute top-17">{errors.username}</p>
+                <p className="text-red-500 text-sm absolute top-17">
+                  {errors.username}
+                </p>
               </div>
 
               {/* <!-- Email input --> */}
@@ -245,13 +243,14 @@ export default function SignUp() {
                   onChange={(e) =>
                     setRegistrationData((prev) => {
                       setErrors({});
-                      return  {...prev,
-                      email: e.target.value,}
+                      return { ...prev, email: e.target.value };
                     })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-800 bg-slate-200 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <p className="text-red-500 text-sm absolute top-17">{errors.email}</p>
+                <p className="text-red-500 text-sm absolute top-17">
+                  {errors.email}
+                </p>
               </div>
 
               {/* <!--Password input--> */}
@@ -270,13 +269,14 @@ export default function SignUp() {
                   onChange={(e) =>
                     setRegistrationData((prev) => {
                       setErrors({});
-                      return  {...prev,
-                      password: e.target.value,}
+                      return { ...prev, password: e.target.value };
                     })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-80 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <p className="text-red-500 text-sm absolute top-17">{errors.password}</p>
+                <p className="text-red-500 text-sm absolute top-17">
+                  {errors.password}
+                </p>
               </div>
 
               {/* <!--Mobile Number input--> */}
@@ -295,13 +295,14 @@ export default function SignUp() {
                   onChange={(e) =>
                     setRegistrationData((prev) => {
                       setErrors({});
-                      return  {...prev,
-                      mobileNumber: e.target.value,}
+                      return { ...prev, mobileNumber: e.target.value };
                     })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <p className="text-red-500 text-sm absolute top-17">{errors.mobileNumber}</p>
+                <p className="text-red-500 text-sm absolute top-17">
+                  {errors.mobileNumber}
+                </p>
               </div>
 
               {/* <!--Date Of Birth input--> */}
@@ -324,14 +325,15 @@ export default function SignUp() {
                   onChange={(selectedDates, dateStr) =>
                     setRegistrationData((prev) => {
                       setErrors({});
-                      return  {...prev,
-                      dateOfBirth: dateStr,}
+                      return { ...prev, dateOfBirth: dateStr };
                     })
                   }
                   className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="YYYY-MM-DD"
                 />
-                <p className="text-red-500 text-sm absolute top-17">{errors.dateOfBirth}</p>
+                <p className="text-red-500 text-sm absolute top-17">
+                  {errors.dateOfBirth}
+                </p>
               </div>
 
               {/* <!-- Login button --> */}

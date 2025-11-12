@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import Modal from "./Modal";
 import Input from "./Input";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../Contexts/AuthContext";
 
 export default function SignUpModal({
   openSignUp: isOpen,
@@ -18,6 +19,9 @@ export default function SignUpModal({
   });
   const [errors, setErrors] = useState({});
   const [signingUp, setSigningUp] = useState(false);
+  // const [responseErrors, setResponseErrors] = useState("");
+
+  const { setUser, refreshAuth } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -156,12 +160,15 @@ export default function SignUpModal({
 
     try {
       setSigningUp(true);
-      const url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/auth/register`;
+      const url = `${
+        import.meta.env.VITE_BACKEND_BASE_URL
+      }/api/v1/auth/register`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: 'include',
         body: JSON.stringify({
           username: formData.username,
           email: formData.email,
@@ -171,14 +178,28 @@ export default function SignUpModal({
         }),
       });
 
+      console.log("first: ", response);
+
       const data = await response.json();
 
       console.log("Data: ", data);
-      const user = data?.data?.user;
 
-      navigate("/login");
-
-      alert(`${data.message}, Please login now`);
+      if (data.statusCode >= 400) {
+        // setResponseErrors(data.message);
+        alert(data.message);
+      } else {
+        console.log("user: ", data.data.user);
+        setUser(data.data.user);
+        refreshAuth();
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+          dateOfBirth: "",
+          mobileNumber: "",
+        });
+        navigate("/");
+      }
     } catch (error) {
       console.log("Error in registering user: ", error.message);
     } finally {
@@ -267,30 +288,43 @@ export default function SignUpModal({
 
           <div className="flex justify-center">
             <button
-      type="submit"
-      onClick={handleSubmit}
-      disabled={signingUp}
-      className={`flex items-center gap-2 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60`}
-      aria-busy={signingUp || undefined}
-    >
-      {signingUp && (
-        <svg
-          className="w-4 h-4 animate-spin text-white"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-        </svg>
-      )}
+              type="submit"
+              onClick={handleSubmit}
+              disabled={signingUp}
+              className={`flex items-center gap-2 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60`}
+              aria-busy={signingUp || undefined}
+            >
+              {signingUp && (
+                <svg
+                  className="w-4 h-4 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+              )}
 
-      <span>{signingUp ? "Submitting…" : "Sign up"}</span>
+              <span>{signingUp ? "Submitting…" : "Sign up"}</span>
 
-      {/* Visually hidden status for screen readers */}
-      {signingUp && <span className="sr-only">Submitting your registration</span>}
-    </button>
+              {/* Visually hidden status for screen readers */}
+              {signingUp && (
+                <span className="sr-only">Submitting your registration</span>
+              )}
+            </button>
           </div>
         </form>
       }
