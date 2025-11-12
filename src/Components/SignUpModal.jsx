@@ -174,7 +174,7 @@ export default function SignUpModal({
       const data = await response.json();
 
       console.log("Data: ", data);
-      const user = data.data.user;
+      const user = data?.data?.user;
 
       navigate("/login");
 
