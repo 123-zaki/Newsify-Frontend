@@ -20,11 +20,15 @@ import CommentModal from "../Components/CommentModal";
 import { CommentContext } from "../Contexts/CommentContext";
 import { CommentNewsContext } from "../Contexts/CommentNewsContext";
 import { DashboardHamburgerContext } from "../Contexts/DashboardHamburgerContext";
+import { UploadNewsContext } from "../Contexts/UploadNewsContext";
+import UploadNewsModal from "../Components/UploadNewsModal";
 
 export default function Dashboard() {
   const { setOpenProfileMenu } = useContext(ProfileMenuContext);
   const [isDark] = useContext(ThemeContext);
   const { isOpen, setIsOpen } = useContext(DashboardHamburgerContext);
+  const { isUploadNewsOpen, setIsUploadNewsOpen } =
+    useContext(UploadNewsContext);
   const windowSize = useWindowSize();
   // console.log("window Size: ", windowSize);
 
@@ -57,8 +61,8 @@ export default function Dashboard() {
           method: "GET",
           credentials: "include",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
         });
 
         if (!response.ok) {
@@ -111,7 +115,7 @@ export default function Dashboard() {
         method: "POST",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         },
         body: fd,
       });
@@ -142,8 +146,8 @@ export default function Dashboard() {
         method: "GET",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
       });
 
       if (!response.ok) {
@@ -195,6 +199,10 @@ export default function Dashboard() {
             } ${
               isDark ? "text-neutral-300" : "text-black"
             } flex items-center gap-2`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
           >
             <FaSearchLocation /> Nearby News
           </div>
@@ -204,6 +212,12 @@ export default function Dashboard() {
             } ${
               isDark ? "text-neutral-300" : "text-black"
             } flex items-center gap-2`}
+            onClick={(e) => {
+              console.log("clicked");
+              e.stopPropagation();
+              setIsOpen(false);
+              setIsUploadNewsOpen(!isUploadNewsOpen);
+            }}
           >
             <FaPenAlt />
             Upload News
@@ -214,6 +228,10 @@ export default function Dashboard() {
             } ${
               isDark ? "text-neutral-300" : "text-black"
             } flex items-center gap-2`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
           >
             <FaHeart />
             Liked Posts
@@ -224,6 +242,10 @@ export default function Dashboard() {
             } ${
               isDark ? "text-neutral-300" : "text-black"
             } flex items-center gap-2`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
           >
             <FaComment />
             Comments
@@ -234,6 +256,10 @@ export default function Dashboard() {
             } ${
               isDark ? "text-neutral-300" : "text-black"
             } flex items-center gap-2`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
           >
             <FaUser />
             Profile
@@ -244,6 +270,10 @@ export default function Dashboard() {
             } ${
               isDark ? "text-neutral-300" : "text-black"
             } flex items-center gap-2`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
           >
             <FaCog />
             Settings
@@ -288,6 +318,12 @@ export default function Dashboard() {
                   } ${
                     isDark ? "text-neutral-300" : "text-black"
                   } flex items-center gap-2`}
+                  onClick={(e) => {
+                    console.log("clicked");
+                    e.stopPropagation();
+                    setIsOpen(false);
+                    setIsUploadNewsOpen(!isUploadNewsOpen);
+                  }}
                 >
                   <FaPenAlt />
                   Upload News
@@ -502,6 +538,8 @@ export default function Dashboard() {
           </form>
         </div>
       </main>
+
+      <UploadNewsModal />
     </div>
   );
 }

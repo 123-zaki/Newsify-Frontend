@@ -21,6 +21,7 @@ import { CommentProvider } from "./Contexts/CommentContext.jsx";
 import { CommentNewsProvider } from "./Contexts/CommentNewsContext.jsx";
 import { ReplyProvider } from "./Contexts/ReplyingContext.jsx";
 import { DashboardHamburgerProvider } from "./Contexts/DashboardHamburgerContext.jsx";
+import { UploadNewsProvider } from "./Contexts/UploadNewsContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,21 +29,23 @@ const router = createBrowserRouter([
     element: (
       <AuthProvider>
         <CategoryProvider>
-          <DashboardHamburgerProvider>
-            <ReplyProvider>
-              <CommentProvider>
-                <CommentNewsProvider>
-                  <ThemeProvider>
-                    <SearchProvider>
-                      <ProfileMenuProvider>
-                        <App />
-                      </ProfileMenuProvider>
-                    </SearchProvider>
-                  </ThemeProvider>
-                </CommentNewsProvider>
-              </CommentProvider>
-            </ReplyProvider>
-          </DashboardHamburgerProvider>
+          <UploadNewsProvider>
+            <DashboardHamburgerProvider>
+              <ReplyProvider>
+                <CommentProvider>
+                  <CommentNewsProvider>
+                    <ThemeProvider>
+                      <SearchProvider>
+                        <ProfileMenuProvider>
+                          <App />
+                        </ProfileMenuProvider>
+                      </SearchProvider>
+                    </ThemeProvider>
+                  </CommentNewsProvider>
+                </CommentProvider>
+              </ReplyProvider>
+            </DashboardHamburgerProvider>
+          </UploadNewsProvider>
         </CategoryProvider>
       </AuthProvider>
     ),
