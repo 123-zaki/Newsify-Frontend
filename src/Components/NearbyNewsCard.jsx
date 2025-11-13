@@ -32,7 +32,7 @@ export default function NearbyNewsCard({ news, fetchExistingIndComments }) {
           method: "GET",
           credentials: "include",
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
           }
         });
 
@@ -59,7 +59,7 @@ export default function NearbyNewsCard({ news, fetchExistingIndComments }) {
       try {
         const response = await fetch(url, {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
           credentials: "include",
           body: JSON.stringify({ liked, newsId: news._id }),
         });
@@ -90,7 +90,7 @@ export default function NearbyNewsCard({ news, fetchExistingIndComments }) {
       try {
         const response = await fetch(url, {
           method: "GET",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
           credentials: "include",
         });
 
@@ -139,7 +139,7 @@ export default function NearbyNewsCard({ news, fetchExistingIndComments }) {
           method: "GET",
           credentials: "include",
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
           }
         });
         if (!response.ok) {

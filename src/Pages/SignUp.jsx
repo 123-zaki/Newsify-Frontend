@@ -151,7 +151,7 @@ export default function SignUp() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          // Authorization: `Bearer ${token}`
         },
         credentials: "include",
         body: JSON.stringify({
@@ -174,6 +174,8 @@ export default function SignUp() {
           mobileNumber: "",
           dateOfBirth: "",
         });
+
+        localStorage.setItem('jwtToken', data?.data?.token);
 
         await refreshAuth();
 

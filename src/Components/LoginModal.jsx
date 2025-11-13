@@ -152,7 +152,7 @@ export default function LoginModal({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          // Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         },
         credentials: "include",
         body: JSON.stringify({
@@ -170,6 +170,7 @@ export default function LoginModal({
       } else {
         console.log("user: ", data.data.user);
         setUser(data.data.user);
+        localStorage.setItem('jwtToken', data.data.token);
         navigate("/");
       }
       setFormData({

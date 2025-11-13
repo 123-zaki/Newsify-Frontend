@@ -30,7 +30,7 @@ export default function ViewReplies({ parentComment }) {
         method: "GET",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         }
       });
 

@@ -167,7 +167,7 @@ export default function SignUpModal({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          // Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         },
         credentials: 'include',
         body: JSON.stringify({
@@ -190,6 +190,7 @@ export default function SignUpModal({
         alert(data.message);
       } else {
         console.log("user: ", data.data.user);
+        localStorage.setItem('jwtToken', data.data.user);
         setUser(data.data.user);
         refreshAuth();
         setFormData({

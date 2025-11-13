@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         method: "GET",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         }
       });
 
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
         method: "GET",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         }
       });
       setUser(null);

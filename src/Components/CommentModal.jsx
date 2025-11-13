@@ -105,7 +105,7 @@ export default function CommentModal({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         },
         credentials: "include",
         body: JSON.stringify(payload),

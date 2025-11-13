@@ -32,7 +32,7 @@ export const useWatchLocation = (
         try {
           const response = await fetch(url, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
             credentials: "include",
             body: JSON.stringify({ latitude, longitude }),
           });

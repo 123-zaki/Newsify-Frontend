@@ -57,7 +57,7 @@ export default function Dashboard() {
           method: "GET",
           credentials: "include",
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
           }
         });
 
@@ -111,7 +111,7 @@ export default function Dashboard() {
         method: "POST",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         },
         body: fd,
       });
@@ -142,7 +142,7 @@ export default function Dashboard() {
         method: "GET",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         }
       });
 
