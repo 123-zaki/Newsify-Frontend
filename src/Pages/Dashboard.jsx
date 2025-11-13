@@ -56,6 +56,9 @@ export default function Dashboard() {
         const response = await fetch(url, {
           method: "GET",
           credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
 
         if (!response.ok) {
@@ -107,6 +110,9 @@ export default function Dashboard() {
       const response = await fetch(url, {
         method: "POST",
         credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         body: fd,
       });
 
@@ -135,6 +141,9 @@ export default function Dashboard() {
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
       if (!response.ok) {

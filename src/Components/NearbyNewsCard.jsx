@@ -31,6 +31,9 @@ export default function NearbyNewsCard({ news, fetchExistingIndComments }) {
         const response = await fetch(url, {
           method: "GET",
           credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
 
         if (!response.ok) {
@@ -56,7 +59,7 @@ export default function NearbyNewsCard({ news, fetchExistingIndComments }) {
       try {
         const response = await fetch(url, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           credentials: "include",
           body: JSON.stringify({ liked, newsId: news._id }),
         });
@@ -87,7 +90,7 @@ export default function NearbyNewsCard({ news, fetchExistingIndComments }) {
       try {
         const response = await fetch(url, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           credentials: "include",
         });
 
@@ -135,6 +138,9 @@ export default function NearbyNewsCard({ news, fetchExistingIndComments }) {
         const response = await fetch(url, {
           method: "GET",
           credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         if (!response.ok) {
           console.log("Update Share failed: ", response.status);

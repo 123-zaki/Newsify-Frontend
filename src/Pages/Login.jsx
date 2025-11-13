@@ -140,6 +140,7 @@ export default function Login() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
         credentials: "include",
         body: JSON.stringify({

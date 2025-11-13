@@ -16,6 +16,9 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
       if (response.ok) {
@@ -47,6 +50,9 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
       setUser(null);
     } catch (error) {

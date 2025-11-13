@@ -29,6 +29,9 @@ export default function ViewReplies({ parentComment }) {
       const response = await fetch(url, {
         method: "GET",
         credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
       if (!response.ok) {
