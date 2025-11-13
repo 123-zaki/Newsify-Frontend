@@ -7,13 +7,14 @@ import {
   FaHeart,
   FaLocationArrow,
   FaPenAlt,
+  FaPlus,
   FaSearchLocation,
   FaUpload,
   FaUser,
 } from "react-icons/fa";
 import { useWindowSize } from "../CustomHooks/useWindowSize";
 import { ThemeContext } from "../Contexts/ThemeContext";
-import Loader from "../Components/Loader";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import NearbyNewsCard from "../Components/NearbyNewsCard";
 import News from "../Components/News";
 import CommentModal from "../Components/CommentModal";
@@ -174,6 +175,16 @@ export default function Dashboard() {
         setOpenComment(false);
       }}
     >
+      <div
+        className={`absolute p-4 text-3xl rounded-full bg-black/60 bottom-20 z-10 cursor-pointer right-3 text-(--text)`}
+        title="Upload News (Contribute)"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsUploadNewsOpen(true);
+        }}
+      >
+        <FaPlus />
+      </div>
       <main
         className="mt-30 gap-4 w-[calc(100%-16px)] sm:w-[calc(100%-32px)] mx-auto text-(--text)"
         style={{
@@ -374,25 +385,45 @@ export default function Dashboard() {
           <CommentModal fetchExistingIndComments={fetchExistingIndComments} />
           <div className="rounded-md shadow-sm bg-(--bg) h-full px-3 overflow-y-scroll scroll-smooth hide-scrollbar relative my-2">
             <div className="bg-(--bg) h-4 sticky z-10 w-full top-0"></div>
-            <div className="flex flex-col gap-3">
-              {/* <NearbyNewsCard /> */}
-              {/* <NearbyNewsCard />
-              <NearbyNewsCard />
-              <NearbyNewsCard />
-              <NearbyNewsCard /> */}
+            {fetchingNews ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <LoadingSpinner />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {/* <NearbyNewsCard /> */}
+                {/* <NearbyNewsCard />
+                <NearbyNewsCard />
+                <NearbyNewsCard />
+                <NearbyNewsCard /> */}
 
-              {nearbyNews.map((news, ind) => {
-                return (
-                  <div className="flex flex-col gap-2" key={ind}>
-                    <NearbyNewsCard
-                      news={news}
-                      fetchExistingIndComments={fetchExistingIndComments}
-                    />
-                    {/* <News article={news} ind={ind} /> */}
+                {nearbyNews.length > 0 ? (
+                  nearbyNews.map((news, ind) => {
+                    return (
+                      <div className="flex flex-col gap-2" key={ind}>
+                        <NearbyNewsCard
+                          news={news}
+                          fetchExistingIndComments={fetchExistingIndComments}
+                        />
+                        {/* <News article={news} ind={ind} /> */}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="flex items-center justify-center mt-40">
+                    <div className="flex flex-col items-center">
+                      <h2 className="text-2xl md:text-3xl font-bold text-center">
+                        No nearby news yet
+                      </h2>
+                      <p className="text-sm text-center">
+                        Take your first step and be the one in your area to
+                        contribute
+                      </p>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </div>
+            )}
             <div className="bg-(--bg) h-3 sticky z-10 w-full bottom-0 backdrop-blur-3xl"></div>
           </div>
         </div>
