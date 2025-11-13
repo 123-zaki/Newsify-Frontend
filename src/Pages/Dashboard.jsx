@@ -176,7 +176,7 @@ export default function Dashboard() {
       }}
     >
       <div
-        className={`absolute p-4 text-3xl rounded-full bg-black/60 bottom-20 z-10 cursor-pointer right-3 text-(--text)`}
+        className={`absolute p-4 text-4xl rounded-full bg-black/60 bottom-20 z-20 cursor-pointer right-3 text-white`}
         title="Upload News (Contribute)"
         onClick={(e) => {
           e.stopPropagation();
