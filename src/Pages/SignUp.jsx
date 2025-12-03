@@ -3,6 +3,19 @@ import { Link, useNavigate } from "react-router-dom";
 import DatePicker from "../Components/DatePicker";
 import { AuthContext } from "../Contexts/AuthContext";
 
+function isAtLeast12YearsOld(dob) {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+
+    // Adjust age if birthday hasn't occurred yet this year
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1 >= 12;
+    }
+    return age >= 12;
+  }
+
 export default function SignUp() {
   const dobRef = useRef(null);
   const [registrationData, setRegistrationData] = useState({
@@ -163,10 +176,13 @@ export default function SignUp() {
         }),
       });
 
+      const data = await response.json();
+      // console.log(data.message)
+
       if (data.statusCode >= 400) {
         setResponseErrors(data.message);
       } else {
-        console.log("user: ", data.data.user);
+        console.log("user: ", data?.data?.user);
         setRegistrationData({
           username: "",
           email: "",
@@ -175,7 +191,7 @@ export default function SignUp() {
           dateOfBirth: "",
         });
 
-        localStorage.setItem('jwtToken', data?.data?.token);
+        localStorage.setItem("jwtToken", data?.data?.token);
 
         await refreshAuth();
 
@@ -188,6 +204,7 @@ export default function SignUp() {
       setSigningUp(false);
     }
   }
+
   return (
     <section className="h-screen px-6 bg-(--bg-body)">
       <div className="h-full">
@@ -338,6 +355,13 @@ export default function SignUp() {
                   {errors.dateOfBirth}
                 </p>
               </div>
+
+              {/*  Response Errors  */}
+              {responseErrors && (
+                <p className="text-red-600 text-sm top-[1040px] absolute -mt-3">
+                  {responseErrors}
+                </p>
+              )}
 
               {/* <!-- Login button --> */}
               <div className="text-center lg:text-left py-6 mt-20">
