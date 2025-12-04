@@ -5,7 +5,7 @@ import { FaUser, FaBookmark, FaHome, FaGlobe } from "react-icons/fa";
 export default function Footer() {
   return (
     <footer className="flex justify-center">
-      <nav className="bg-(--bg) text-(--text) h-12 sm:h-15 fixed bottom-2 w-[calc(100%-16px)] sm:w-[calc(100%-32px)] shadow-md rounded-lg flex items-center">
+      <nav className="bg-(--bg) text-(--text) h-12 sm:h-15 fixed z-20 bottom-2 w-[calc(100%-16px)] sm:w-[calc(100%-32px)] shadow-md rounded-lg flex items-center">
         <div className="flex justify-between w-[90%] mx-auto">
           <NavLink
             to={"/"}

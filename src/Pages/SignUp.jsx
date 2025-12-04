@@ -222,147 +222,149 @@ export default function SignUp() {
           {/* <!-- Right column container --> */}
           <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
             <form>
-              {/* <!--Username input--> */}
-              <div className="mb-6 relative mt-10">
-                <label
-                  htmlFor="username"
-                  className="block mb-2 text-sm font-medium text-(--text)"
-                >
-                  Username
-                </label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  value={registrationData.username}
-                  onChange={(e) =>
-                    setRegistrationData((prev) => {
-                      setErrors({});
-                      return { ...prev, username: e.target.value };
-                    })
-                  }
-                  className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-800 bg-slate-200 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-red-500 text-sm absolute top-17">
-                  {errors.username}
-                </p>
-              </div>
+              <div className="relative">
+                {/* <!--Username input--> */}
+                <div className="mb-6 relative mt-10">
+                  <label
+                    htmlFor="username"
+                    className="block mb-2 text-sm font-medium text-(--text)"
+                  >
+                    Username
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    value={registrationData.username}
+                    onChange={(e) =>
+                      setRegistrationData((prev) => {
+                        setErrors({});
+                        return { ...prev, username: e.target.value };
+                      })
+                    }
+                    className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-800 bg-slate-200 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-red-500 text-sm absolute top-17">
+                    {errors.username}
+                  </p>
+                </div>
 
-              {/* <!-- Email input --> */}
-              <div className="mb-6 relative mt-10">
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-(--text)"
-                >
-                  Email address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={registrationData.email}
-                  onChange={(e) =>
-                    setRegistrationData((prev) => {
-                      setErrors({});
-                      return { ...prev, email: e.target.value };
-                    })
-                  }
-                  className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-800 bg-slate-200 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-red-500 text-sm absolute top-17">
-                  {errors.email}
-                </p>
-              </div>
+                {/* <!-- Email input --> */}
+                <div className="mb-6 relative mt-10">
+                  <label
+                    htmlFor="email"
+                    className="block mb-2 text-sm font-medium text-(--text)"
+                  >
+                    Email address
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={registrationData.email}
+                    onChange={(e) =>
+                      setRegistrationData((prev) => {
+                        setErrors({});
+                        return { ...prev, email: e.target.value };
+                      })
+                    }
+                    className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-800 bg-slate-200 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-red-500 text-sm absolute top-17">
+                    {errors.email}
+                  </p>
+                </div>
 
-              {/* <!--Password input--> */}
-              <div className="mb-6 relative mt-10">
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-(--text)"
-                >
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={registrationData.password}
-                  onChange={(e) =>
-                    setRegistrationData((prev) => {
-                      setErrors({});
-                      return { ...prev, password: e.target.value };
-                    })
-                  }
-                  className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-80 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-red-500 text-sm absolute top-17">
-                  {errors.password}
-                </p>
-              </div>
+                {/* <!--Password input--> */}
+                <div className="mb-6 relative mt-10">
+                  <label
+                    htmlFor="password"
+                    className="block mb-2 text-sm font-medium text-(--text)"
+                  >
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={registrationData.password}
+                    onChange={(e) =>
+                      setRegistrationData((prev) => {
+                        setErrors({});
+                        return { ...prev, password: e.target.value };
+                      })
+                    }
+                    className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-80 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-red-500 text-sm absolute top-17">
+                    {errors.password}
+                  </p>
+                </div>
 
-              {/* <!--Mobile Number input--> */}
-              <div className="mb-6 relative mt-10">
-                <label
-                  htmlFor="mobile"
-                  className="block mb-2 text-sm font-medium text-(--text)"
-                >
-                  Mobile No.
-                </label>
-                <input
-                  id="mobile"
-                  name="mobile"
-                  type="tel"
-                  value={registrationData.mobileNumber}
-                  onChange={(e) =>
-                    setRegistrationData((prev) => {
-                      setErrors({});
-                      return { ...prev, mobileNumber: e.target.value };
-                    })
-                  }
-                  className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-red-500 text-sm absolute top-17">
-                  {errors.mobileNumber}
-                </p>
-              </div>
+                {/* <!--Mobile Number input--> */}
+                <div className="mb-6 relative mt-10">
+                  <label
+                    htmlFor="mobile"
+                    className="block mb-2 text-sm font-medium text-(--text)"
+                  >
+                    Mobile No.
+                  </label>
+                  <input
+                    id="mobile"
+                    name="mobile"
+                    type="tel"
+                    value={registrationData.mobileNumber}
+                    onChange={(e) =>
+                      setRegistrationData((prev) => {
+                        setErrors({});
+                        return { ...prev, mobileNumber: e.target.value };
+                      })
+                    }
+                    className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-red-500 text-sm absolute top-17">
+                    {errors.mobileNumber}
+                  </p>
+                </div>
 
-              {/* <!--Date Of Birth input--> */}
-              <div className="mb-6 relative mt-10">
-                <label
-                  htmlFor="dob"
-                  className="block mb-2 text-sm font-medium text-(--text)"
-                >
-                  Date Of Birth
-                </label>
-                <DatePicker
-                  id="dob"
-                  name="dob"
-                  value={registrationData.dateOfBirth}
-                  options={{
-                    dateFormat: "Y-m-d",
-                    maxDate: "today",
-                    allowInput: true,
-                  }}
-                  onChange={(selectedDates, dateStr) =>
-                    setRegistrationData((prev) => {
-                      setErrors({});
-                      return { ...prev, dateOfBirth: dateStr };
-                    })
-                  }
-                  className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="YYYY-MM-DD"
-                />
-                <p className="text-red-500 text-sm absolute top-17">
-                  {errors.dateOfBirth}
-                </p>
-              </div>
+                {/* <!--Date Of Birth input--> */}
+                <div className="mb-6 relative mt-10">
+                  <label
+                    htmlFor="dob"
+                    className="block mb-2 text-sm font-medium text-(--text)"
+                  >
+                    Date Of Birth
+                  </label>
+                  <DatePicker
+                    id="dob"
+                    name="dob"
+                    value={registrationData.dateOfBirth}
+                    options={{
+                      dateFormat: "Y-m-d",
+                      maxDate: "today",
+                      allowInput: true,
+                    }}
+                    onChange={(selectedDates, dateStr) =>
+                      setRegistrationData((prev) => {
+                        setErrors({});
+                        return { ...prev, dateOfBirth: dateStr };
+                      })
+                    }
+                    className="block w-full px-3 py-2 border border-neutral-300 rounded-md bg-slate-200 text-neutral-800 dark:bg-neutral-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="YYYY-MM-DD"
+                  />
+                  <p className="text-red-500 text-sm absolute top-17">
+                    {errors.dateOfBirth}
+                  </p>
+                </div>
 
-              {/*  Response Errors  */}
-              {responseErrors && (
-                <p className="text-red-600 text-sm top-[1040px] absolute -mt-3">
-                  {responseErrors}
-                </p>
-              )}
+                {/*  Response Errors  */}
+                {responseErrors && (
+                  <p className="text-red-600 text-sm -bottom-15 absolute -mt-3">
+                    {responseErrors}
+                  </p>
+                )}
+              </div>
 
               {/* <!-- Login button --> */}
               <div className="text-center lg:text-left py-6 mt-20">

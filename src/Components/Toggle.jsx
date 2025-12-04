@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 const Toggle = ({ setIsDark, isDark }) => {
   const [isChecked, setIsChecked] = useState(JSON.parse(localStorage.getItem('isChecked')) ?? false);
@@ -33,7 +34,11 @@ const Toggle = ({ setIsDark, isDark }) => {
             className={`dot h-4 w-4 rounded-full bg-white duration-200 ${
               isDark ? "translate-x-[22px]" : ""
             }`}
-          ></span>
+          >
+            <div className="text-black">
+              {isDark ? <FaSun/> : <FaMoon/>}
+            </div>
+          </span>
         </span>
         <span className="label sm:flex items-center text-sm font-medium text-(--text) hidden">
           Dark
