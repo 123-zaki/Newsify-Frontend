@@ -6,28 +6,55 @@ import { FaArrowCircleRight } from "react-icons/fa";
 import { ReplyContext } from "../Contexts/ReplyingContext";
 import { CommentContext } from "../Contexts/CommentContext";
 import { CommentNewsContext } from "../Contexts/CommentNewsContext";
+import CommentSpinner from "./CommentSpinner";
 
-export default function CommentModal({
-  fetchExistingIndComments,
-}) {
+export default function CommentModal({ fetchExistingIndComments }) {
+  const { openComment, setOpenComment } = useContext(CommentContext);
+  const {
+    existingIndComments,
+    setExistingIndComments,
+    newsToSeeComment,
+    setNewIndComments,
+    setNewChildComments,
+    newIndComments,
+  } = useContext(CommentNewsContext);
+  const [loadingComments, setLoadingComments] = useState(false);
 
-
-  const {openComment, setOpenComment} = useContext(CommentContext);
-  const {existingIndComments, setExistingIndComments, newsToSeeComment, setNewIndComments, setNewChildComments, newIndComments} = useContext(CommentNewsContext);
+  // useEffect(() => {
+  //   fetchExistingIndComments().then((data) => {
+  //     // console.log(": ", data);
+  //     const items = data ? data : [];
+  //     setExistingIndComments([...items])
+  //   });
+  // }, [newsToSeeComment, newIndComments]);
 
   useEffect(() => {
-    fetchExistingIndComments().then((data) => {
-      // console.log(": ", data);
-      const items = data ? data : [];
-      setExistingIndComments([...items])
-    });
+    let mounted = true;
+    (async () => {
+      try {
+        setLoadingComments(true);
+        const data = await fetchExistingIndComments();
+        if (!mounted) return;
+        const items = data ? data : [];
+        setExistingIndComments([...items]);
+      } catch (err) {
+        // optional: set an error state or console.log
+        console.log("Error fetching comments:", err);
+      } finally {
+        if (mounted) setLoadingComments(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
   }, [newsToSeeComment, newIndComments]);
 
   // console.log("Exis ind comm: ", existingIndComments);
 
   const [isDark] = useContext(ThemeContext);
   const { replyingComment, setReplyingComment } = useContext(ReplyContext);
-  const {setTemporaryComment} = useContext(CommentNewsContext);
+  const { setTemporaryComment } = useContext(CommentNewsContext);
 
   const sentinelRef = useRef(null);
   const [hasShadow, setHasShadow] = useState(false);
@@ -77,7 +104,11 @@ export default function CommentModal({
       let payload = {};
       const parentComment = replyingComment;
       if (replyingComment) {
-        url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/comments/create-child-comment/${newsToSeeComment?._id}/${parentComment._id}`;
+        url = `${
+          import.meta.env.VITE_BACKEND_BASE_URL
+        }/api/v1/comments/create-child-comment/${newsToSeeComment?._id}/${
+          parentComment._id
+        }`;
 
         if (commentText.trim() !== "" && commentText[0] === "@") {
           const [userName] = commentText.split(" ");
@@ -94,7 +125,9 @@ export default function CommentModal({
               : undefined,
         };
       } else {
-        url = `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/comments/create-ind-comment/${newsToSeeComment?._id}`;
+        url = `${
+          import.meta.env.VITE_BACKEND_BASE_URL
+        }/api/v1/comments/create-ind-comment/${newsToSeeComment?._id}`;
 
         payload = {
           text: commentText,
@@ -105,7 +138,7 @@ export default function CommentModal({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         },
         credentials: "include",
         body: JSON.stringify(payload),
@@ -153,73 +186,78 @@ export default function CommentModal({
         <div className={`text-(--text) max-w-[400px] px-2 pb-3`}>
           <div className={`flex flex-col gap-0 pb-6 px-2`}>
             {/* Original UI */}
-            {existingIndComments?.map((indComment, ind) => {
-              // console.log("first: ", indComment);
-              return (
-                <div key={ind}>
-                  <h3 className="text-md font-bold">
-                    {indComment.commentedBy.username ?? "Wrong access"}
-                  </h3>
-                  <p className="text-xs">{indComment.text ?? "Wrong access"}</p>
-                  <div className="flex flex-col gap-2 items-start mt-1">
-                    <label
-                      htmlFor="comment"
-                      className={`cursor-pointer ${
-                        isDark ? "text-neutral-300" : "text-slate-400"
-                      } font-semibold text-xs`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setReplyingComment(indComment);
-                      }}
-                    >
-                      Reply
-                    </label>
-
-                    {/* Replies Section */}
-                    <ViewReplies
-                      parentComment={indComment}
-                    />
-                  </div>
+            <div className={`flex flex-col gap-0 pb-6 px-2`}>
+              {loadingComments ? (
+                <div className="w-full flex items-center justify-center py-4">
+                  <CommentSpinner size="md" text="Loading comments..." />
                 </div>
-              );
-            })}
+              ) : (
+                existingIndComments?.map((indComment, ind) => {
+                  return (
+                    <div key={ind}>
+                      <h3 className="text-md font-bold">
+                        {indComment.commentedBy.username ?? "Wrong access"}
+                      </h3>
+                      <p className="text-xs">
+                        {indComment.text ?? "Wrong access"}
+                      </p>
+                      <div className="flex flex-col gap-2 items-start mt-1">
+                        <label
+                          htmlFor="comment"
+                          className={`cursor-pointer ${
+                            isDark ? "text-neutral-300" : "text-slate-400"
+                          } font-semibold text-xs`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setReplyingComment(indComment);
+                          }}
+                        >
+                          Reply
+                        </label>
+
+                        <ViewReplies parentComment={indComment} />
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
-        
       </div>
       <div
-          className={`sticky bottom-22 ${
-            isDark ? "bg-(--bg-body)" : "bg-white"
-          } p-3 shadow-sm w-full ${openComment ? 'block' : 'hidden'}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <form action="">
-            <div
-              className={`px-4 outline-0 border ${
-                isDark ? "border-neutral-100" : "border-slate-200"
-              } w-full max-w-[450px] mx-auto rounded-lg flex justify-between`}
-            >
-              <input
-                type="text"
-                id="comment"
-                value={commentText}
-                placeholder="Join the conversation..."
-                className={`py-1.5 outline-0 ${
-                  isDark
-                    ? "placeholder:text-neutral-300"
-                    : "placeholder:text-neutral-400"
-                } w-full max-w-[450px] mx-auto block rounded-lg`}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  setCommentText(e.target.value);
-                }}
-              />
-              <button className={`cursor-pointer`} onClick={createComment}>
-                <FaArrowCircleRight />
-              </button>
-            </div>
-          </form>
-        </div>
+        className={`sticky bottom-22 ${
+          isDark ? "bg-(--bg-body)" : "bg-white"
+        } p-3 shadow-sm w-full ${openComment ? "block" : "hidden"}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <form action="">
+          <div
+            className={`px-4 outline-0 border ${
+              isDark ? "border-neutral-100" : "border-slate-200"
+            } w-full max-w-[450px] mx-auto rounded-lg flex justify-between`}
+          >
+            <input
+              type="text"
+              id="comment"
+              value={commentText}
+              placeholder="Join the conversation..."
+              className={`py-1.5 outline-0 ${
+                isDark
+                  ? "placeholder:text-neutral-300"
+                  : "placeholder:text-neutral-400"
+              } w-full max-w-[450px] mx-auto block rounded-lg`}
+              onChange={(e) => {
+                e.stopPropagation();
+                setCommentText(e.target.value);
+              }}
+            />
+            <button className={`cursor-pointer`} onClick={createComment}>
+              <FaArrowCircleRight />
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
