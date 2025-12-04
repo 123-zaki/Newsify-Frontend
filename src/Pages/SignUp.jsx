@@ -4,17 +4,17 @@ import DatePicker from "../Components/DatePicker";
 import { AuthContext } from "../Contexts/AuthContext";
 
 function isAtLeast12YearsOld(dob) {
-    const birthDate = new Date(dob);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
+  const birthDate = new Date(dob);
+  const today = new Date();
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
 
-    // Adjust age if birthday hasn't occurred yet this year
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      return age - 1 >= 12;
-    }
-    return age >= 12;
+  // Adjust age if birthday hasn't occurred yet this year
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    return age - 1 >= 12;
   }
+  return age >= 12;
+}
 
 export default function SignUp() {
   const dobRef = useRef(null);
@@ -50,12 +50,13 @@ export default function SignUp() {
     password: [
       { required: true, message: "Password is required" },
       {
-        validPassword:
+        pattern:
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
         message:
           "Password must include uppercase, lowercase, number, and special character (8–20 chars).",
       },
     ],
+
     mobileNumber: [
       {
         validMobileNumber: /^(?:\+91[-\s]?|91[-\s]?|0)?[6-9]\d{9}$/,
