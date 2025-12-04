@@ -18,6 +18,7 @@ export default function UploadNewsModal() {
     location: null,
   });
   const [responseErrors, setResponseErrors] = useState();
+  const [uploadingNews, setUploadingNews] = useState(false);
 
   async function handleNewsUpload(e) {
     e.preventDefault();
@@ -37,6 +38,7 @@ export default function UploadNewsModal() {
     }/api/v1/nearby/news/upload`;
 
     try {
+      setUploadingNews(true);
       const fd = new FormData();
       fd.append("title", uploadNewsData.title);
       fd.append("description", uploadNewsData.description);
@@ -77,6 +79,8 @@ export default function UploadNewsModal() {
       }
     } catch (error) {
       console.log("Error uploading news: ", error.message);
+    } finally {
+      setUploadingNews(false);
     }
 
     setUploadNewsData({
@@ -230,9 +234,10 @@ export default function UploadNewsModal() {
             </div>
             <button
               type="submit"
-              className="w-full mt-2 px-4 py-1.5 bg-blue-400/60 rounded-md shadow-sm cursor-pointer hover:bg-blue-600/20"
+              disabled={uploadingNews}
+              className={`w-full mt-2 px-4 py-1.5 bg-blue-400/60 rounded-md shadow-sm hover:bg-blue-600/20 ${uploadingNews ? 'cursor-no-drop' : 'cursor-pointer'}`}
             >
-              Submit
+              {uploadingNews ? "Uploading news..." : "Submit"}
             </button>
           </form>
         </div>

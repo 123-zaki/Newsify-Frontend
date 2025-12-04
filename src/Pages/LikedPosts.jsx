@@ -53,6 +53,12 @@ export default function LikedPosts() {
         Getting liked posts...
       </p>
     </div>
+  ) : likedPosts.length === 0 ? (
+    <div className="h-screen w-full flex justify-center items-center">
+      <p className="text-(--text) text-2xl font-semibold">
+        No liked posts yet!
+      </p>
+    </div>
   ) : (
     <div
       className={`mt-45 w-[calc(100%-16px)] mx-auto sm:w-[calc(100%-32px)] mb-20 flex flex-col gap-4 border-2 rounded-2xl overflow-hidden max-w-[750px]`}
