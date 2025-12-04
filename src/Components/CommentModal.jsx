@@ -191,6 +191,8 @@ export default function CommentModal({ fetchExistingIndComments }) {
                 <div className="w-full flex items-center justify-center py-4">
                   <CommentSpinner size="md" text="Loading comments..." />
                 </div>
+              ) : existingIndComments.length === 0 ? (
+                <div className="h-[250px] w-full flex justify-center items-center"><p className="font-semibold text-xl">No Comments yet!</p></div>
               ) : (
                 existingIndComments?.map((indComment, ind) => {
                   return (
