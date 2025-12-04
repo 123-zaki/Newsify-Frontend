@@ -22,6 +22,7 @@ import { CommentNewsProvider } from "./Contexts/CommentNewsContext.jsx";
 import { ReplyProvider } from "./Contexts/ReplyingContext.jsx";
 import { DashboardHamburgerProvider } from "./Contexts/DashboardHamburgerContext.jsx";
 import { UploadNewsProvider } from "./Contexts/UploadNewsContext.jsx";
+import LikedPosts from "./Pages/LikedPosts.jsx";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,16 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Home />,
+      },
+      {
+        path: "/liked-posts",
+        element: (
+          <AuthProvider>
+            <ProtectedRoute>
+              <LikedPosts />
+            </ProtectedRoute>
+          </AuthProvider>
+        ),
       },
       {
         path: "article/:id",

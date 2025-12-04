@@ -109,7 +109,7 @@ export default function Home() {
         <main className="mx-auto w-[calc(100%-16px)] sm:w-[calc(100%-32px)] mt-42 md:mt-45">
           <div
             className={`${
-              openSearch ? "h-[11] p-2" : "h-0 p-0"
+              openSearch ? "h-10 p-2" : "h-0 p-0"
             } transition-all max-w-[900px] mx-auto sticky top-[135px] z-2 bg-slate-200 shadow-xl rounded-4xl flex justify-center outline-none items-center mb-3`}
           >
             <input
@@ -118,7 +118,7 @@ export default function Home() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={`px-4 rounded-2xl w-full text-lg focus:outline-none focus:ring-0 focus-visible:ring-0 ${
-                openSearch ? "h-[11]" : "h-0"
+                openSearch ? "h-10 py-3" : "h-0"
               }`}
               ref={searchRef}
             />

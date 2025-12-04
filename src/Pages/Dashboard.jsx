@@ -23,8 +23,12 @@ import { CommentNewsContext } from "../Contexts/CommentNewsContext";
 import { DashboardHamburgerContext } from "../Contexts/DashboardHamburgerContext";
 import { UploadNewsContext } from "../Contexts/UploadNewsContext";
 import UploadNewsModal from "../Components/UploadNewsModal";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+
+  const navigate = useNavigate();
+
   const { setOpenProfileMenu } = useContext(ProfileMenuContext);
   const [isDark] = useContext(ThemeContext);
   const { isOpen, setIsOpen } = useContext(DashboardHamburgerContext);
@@ -242,6 +246,7 @@ export default function Dashboard() {
             onClick={(e) => {
               e.stopPropagation();
               setIsOpen(false);
+              navigate("/liked-posts");
             }}
           >
             <FaHeart />
@@ -270,6 +275,7 @@ export default function Dashboard() {
             onClick={(e) => {
               e.stopPropagation();
               setIsOpen(false);
+              navigate("/profile");
             }}
           >
             <FaUser />
@@ -345,6 +351,9 @@ export default function Dashboard() {
                   } ${
                     isDark ? "text-neutral-300" : "text-black"
                   } flex items-center gap-2`}
+                  onClick={(e) => {
+                    navigate("/liked-posts");
+                  }}
                 >
                   <FaHeart />
                   Liked Posts
@@ -365,6 +374,9 @@ export default function Dashboard() {
                   } ${
                     isDark ? "text-neutral-300" : "text-black"
                   } flex items-center gap-2`}
+                  onClick={(e) => {
+                    navigate("/profile");
+                  }}
                 >
                   <FaUser />
                   Profile
